@@ -1,0 +1,9 @@
+markdown
+django-filter
+djangorestframework
+django==4.2
+dj-rest-auth
+dj-rest-auth[with_social]
+djangorestframework-simplejwt
+django-allauth[socialaccount]
+Pillow
