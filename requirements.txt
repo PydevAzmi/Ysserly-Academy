@@ -7,3 +7,4 @@ dj-rest-auth[with_social]
 djangorestframework-simplejwt
 django-allauth[socialaccount]
 Pillow
+django-cors-headers
