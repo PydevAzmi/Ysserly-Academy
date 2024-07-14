@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
@@ -20,3 +20,10 @@ class GoogleLogin(SocialLoginView): # if you want to use Implicit Grant, use thi
     adapter_class = GoogleOAuth2Adapter
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
+
+
+def email_confirmation(request, key):
+    return redirect(f"http://127.0.0.1:8000/auth/registration/account-confirm-email/{key}")
+
+def reset_password_confirm(request, uid, token):
+    return redirect(f"http://127.0.0.1:8000/auth/password/reset/confirm/?{uid}&{token}")

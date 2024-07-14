@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "accounts",
+
     "django.contrib.admin",
     'django.contrib.sites',
     "django.contrib.auth",
@@ -40,16 +41,16 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
+
+    # Third Party Libraries
     'dj_rest_auth',
     'dj_rest_auth.registration',
-
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'rest_framework_swagger',
-
     "corsheaders",
     'django_filters',
-
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -160,22 +161,41 @@ AUTHENTICATION_BACKENDS = [
 
 # Email Backends
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
+
 REST_AUTH  = {
     'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
     'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailsSerializer',
+    "USE_JWT" : True,
+    "JWT_AUTH_HTTPONLY": False,
+    'SESSION_LOGIN': False,
+    "OLD_PASSWORD_FIELD_ENABLED" : True,
+    "LOGOUT_ON_PASSWORD_CHANGE" : False,
+    
     }
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=24),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+CORS_ALLOWED_ORGINS = [
+    "http://127.0.0.1:8000/",
+]
+
 
 # DRF Settings
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'my-app-auth'
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
