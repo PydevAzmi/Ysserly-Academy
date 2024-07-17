@@ -8,6 +8,8 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('auth/', include('accounts.urls')),
+    path("api/", include("courses.urls")),
+    
     #path('docs/', include_docs_urls(title='My API Docs')),
     #path('docs/', get_swagger_view(title='My API Docs')),
    
