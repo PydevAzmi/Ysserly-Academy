@@ -6,10 +6,10 @@ from django.utils.translation import gettext_lazy as _
 def profile_image_path(instance, file_name):
     return f'images/users/{instance.username}/{file_name}'
 
-ROLE = {
-    ("Student","Student"),
-    ("Prof","Professor "),
-    }
+ROLE = [
+    ("Student", _("Student")),
+    ("Professor", _("Professor")),
+]
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

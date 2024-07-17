@@ -2,6 +2,7 @@ from rest_framework import serializers
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from .models import User, ROLE
+from courses.models import Student
 from django.core.exceptions import ValidationError as DjangoValidationError
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
@@ -27,11 +28,16 @@ class CustomRegisterSerializer(RegisterSerializer):
         user = super().save(request)
         user.phone_number = self.cleaned_data.get('phone_number')
         user.role = self.cleaned_data.get('role')
+        if user.role == "Student":
+            Student.objects.create(
+                user = user
+            )
         user.save()
         return user
         
 class CustomUserDetailsSerializer(UserDetailsSerializer):
     role = serializers.ReadOnlyField()
+    email = serializers.ReadOnlyField()
     class Meta():
         model = User
         fields = (

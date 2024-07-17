@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
-
+    # My Apps
+    'courses',
     # Third Party Libraries
     'dj_rest_auth',
     'dj_rest_auth.registration',
