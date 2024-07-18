@@ -27,7 +27,7 @@ STATUS_CHOICES = [
 ]
 
 def file_path(instance, file_name):
-    return f"files/{instance.lecture.course.professor}/{instance.lecture.course}/{instance.lecture.title}/{file_name}"
+    return f"files/{instance.lecture.course.professor}/{instance.lecture.course.title}/{instance.lecture.title}/{file_name}"
 
 def file_path_image(instance, file_name):
     return f"files/{instance.professor}/courses/{instance.title}/{file_name}"

@@ -21,6 +21,12 @@ class ProfessorSerializer(serializers.ModelSerializer):
         model = Professor
         fields = '__all__'
 
+class StudentSerializer(serializers.ModelSerializer):
+    user = UserSerailizer(read_only=True)
+    class Meta:
+        model = Student
+        fields= "__all__"
+
 class CourseSerializer(serializers.ModelSerializer):
     professor = serializers.SerializerMethodField()
     class Meta:

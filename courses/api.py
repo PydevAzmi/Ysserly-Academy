@@ -45,3 +45,38 @@ class LecturesListCreateAPIView(generics.ListCreateAPIView):
 class LectureRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LectureSerialiazer
     queryset = Lecture.objects.all()
+
+class FilesListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = FileSerializer
+    def get_queryset(self):
+        pk = self.kwargs["lec_pk"]
+        lec = Lecture.objects.get(id=pk)
+        queryset = FileContent.objects.filter(lecture = lec)
+        return queryset
+
+    def perform_create(self, serializer):
+        pk = self.kwargs["lec_pk"]
+        lec = Lecture.objects.get(id=pk)
+        serializer.save(lecture=lec)
+class FileRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FileSerializer
+    queryset = FileContent.objects.all()
+
+
+
+class VideosListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = VideosSerializer
+    def get_queryset(self):
+        pk = self.kwargs["lec_pk"]
+        lec = Lecture.objects.get(id=pk)
+        queryset = VideoContent.objects.filter(lecture = lec)
+        return queryset
+
+    def perform_create(self, serializer):
+        pk = self.kwargs["lec_pk"]
+        lec = Lecture.objects.get(id=pk)
+        serializer.save(lecture=lec)
+
+class videoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = VideosSerializer
+    queryset = VideoContent.objects.all()
