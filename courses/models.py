@@ -29,6 +29,9 @@ STATUS_CHOICES = [
 def file_path(instance, file_name):
     return f"files/{instance.lecture.course.professor}/{instance.lecture.course}/{instance.lecture.title}/{file_name}"
 
+def file_path_image(instance, file_name):
+    return f"files/{instance.professor}/courses/{instance.title}/{file_name}"
+
 class EducationScope(models.Model):
     university = models.CharField(_("University"), max_length=50, choices=UNIVERSITY_CHOICES)
     specialist = models.CharField(_("Specialist"), max_length=50, null=True, blank=True)
@@ -57,6 +60,7 @@ class Course(EducationScope):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(_("Title"), max_length=50)
     description = models.TextField(_("Description"))
+    image = models.FileField(_("Course Image"), upload_to=file_path_image, max_length=100, null=True, blank=True)
     professor = models.ForeignKey(Professor, verbose_name=_("professor"), related_name="courses", on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("Date"), null=True, blank=True)
 
