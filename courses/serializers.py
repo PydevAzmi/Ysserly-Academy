@@ -29,12 +29,24 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     professor = serializers.SerializerMethodField()
+    is_enrolled = serializers.SerializerMethodField()
+    enrolled_students = serializers.SerializerMethodField()
     class Meta:
         model = Course
         fields= "__all__"
 
     def get_professor(self, obj):
         return f"{obj.professor.user.first_name} {obj.professor.user.last_name}"
+    
+    def get_is_enrolled(self, obj):
+        user = self.context['request'].user
+        if user.role == "Student":
+            enrolled = Enrollment.objects.filter(course = obj, student = user.student_profile).exists()
+            return True if enrolled else False
+        return False
+    
+    def get_enrolled_students(self, obj):
+        return Enrollment.objects.filter(course = obj).count()
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,4 +76,11 @@ class LectureSerialiazer(serializers.ModelSerializer):
     def get_course(self, obj):
         return f"{obj.course.title}"
     
-        
+class EnrollmentSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+    class Meta:
+        model = Enrollment
+        fields = [
+            "id",
+            "student",
+        ]

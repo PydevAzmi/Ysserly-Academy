@@ -17,8 +17,7 @@ urlpatterns = [
     # Lectur's Videos
     path("courses/<course_pk>/lectures/<lec_pk>/videos/", VideosListCreateAPIView.as_view(), name="video_list" ),
     path("courses/<course_pk>/lectures/<lec_pk>/videos/<pk>", videoRetrieveUpdateDestroyAPIView.as_view(), name="video_instance" ),
-
     # Enrolled Students in course
-    #path("courses/<course_pk>/students/", LecturesListCreateAPIView.as_view(), name="lectures_list" ),
-    ##path("courses/<course_pk>/students/<pk>/", LectureRetrieveUpdateDestroyAPIView.as_view(), name="lectures_instance" ),
+    path("courses/<course_pk>/enrolled-students/", EnrollmentListAPIView.as_view(), name="enrolled_list" ),
+    path("courses/<course_pk>/enrolled-students/<pk>/", EnrollmentRetrieveUpdateDestroyAPIView.as_view(), name="enrolled_instance" ),
 ]

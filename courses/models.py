@@ -59,6 +59,7 @@ class Student(EducationScope):
 class Course(EducationScope):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(_("Title"), max_length=50)
+    price = models.DecimalField(_("Price"), max_digits=5, decimal_places=2)
     description = models.TextField(_("Description"))
     image = models.FileField(_("Course Image"), upload_to=file_path_image, max_length=100, null=True, blank=True)
     professor = models.ForeignKey(Professor, verbose_name=_("professor"), related_name="courses", on_delete=models.CASCADE)

@@ -58,10 +58,10 @@ class FilesListCreateAPIView(generics.ListCreateAPIView):
         pk = self.kwargs["lec_pk"]
         lec = Lecture.objects.get(id=pk)
         serializer.save(lecture=lec)
+
 class FileRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
     queryset = FileContent.objects.all()
-
 
 
 class VideosListCreateAPIView(generics.ListCreateAPIView):
@@ -80,3 +80,16 @@ class VideosListCreateAPIView(generics.ListCreateAPIView):
 class videoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = VideosSerializer
     queryset = VideoContent.objects.all()
+
+
+class EnrollmentListAPIView(generics.ListAPIView):
+    serializer_class = EnrollmentSerializer
+    def get_queryset(self):
+        pk = self.kwargs["course_pk"]
+        course = Course.objects.get(id=pk)
+        queryset = Enrollment.objects.filter(course = course)
+        return queryset
+
+class EnrollmentRetrieveUpdateDestroyAPIView(generics.RetrieveDestroyAPIView):
+    serializer_class = EnrollmentSerializer
+    queryset = Enrollment.objects.all()
