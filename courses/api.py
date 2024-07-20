@@ -1,6 +1,7 @@
 from rest_framework import generics, filters
 from .serializers import *
 from .models import *
+from .permissions import *
 from django_filters.rest_framework import DjangoFilterBackend
 
 class ProfessorListApiView(generics.ListAPIView):
@@ -15,21 +16,27 @@ class ProfessorRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
     queryset = Professor.objects.all()
     serializer_class = ProfessorSerializer
 
-
 class CoursesListAPIView(generics.ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['description', "professor__user__first_name", "professor__user__last_name" , "specialist", ]
     filterset_fields = ['university','college']
-    ordering_fields = ['university',]  
+    ordering_fields = ['price',] 
+    permission_classes = [ permissions.IsAuthenticated, IsProfessorOrReadOnly] 
+
+    def perform_create(self, serializer):
+        return serializer.save(professor=self.request.user.professor_profile)
 
 class CourseRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [ permissions.IsAuthenticated, IsProfessorOrReadOnly] 
+
 
 class LecturesListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = LectureSerialiazer
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
     def get_queryset(self):
         pk = self.kwargs["course_pk"]
         course = Course.objects.get(id=pk)
@@ -93,3 +100,24 @@ class EnrollmentListAPIView(generics.ListAPIView):
 class EnrollmentRetrieveUpdateDestroyAPIView(generics.RetrieveDestroyAPIView):
     serializer_class = EnrollmentSerializer
     queryset = Enrollment.objects.all()
+
+class RequestListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = RequestSerializer
+    permission_classes = [IsStudentOrReadOnly]
+    def get_queryset(self):
+        pk = self.kwargs["course_pk"]
+        course = Course.objects.get(id=pk)
+        queryset = Request.objects.filter(course = course, status="Pending")
+        return queryset
+    
+    def perform_create(self, serializer):
+        pk = self.kwargs["course_pk"]
+        course = Course.objects.get(id=pk)
+        user = self.request.user
+        serializer.save(course=course, student=user.student_profile)
+        return super().perform_create(serializer)
+
+
+class RequestRetrieveUpdateDestroyAPIView(generics.RetrieveDestroyAPIView):
+    serializer_class = RequestSerializer
+    queryset = Request.objects.all()

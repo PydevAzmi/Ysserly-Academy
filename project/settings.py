@@ -174,7 +174,7 @@ REST_AUTH  = {
     'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailsSerializer',
     "USE_JWT" : True,
     "JWT_AUTH_HTTPONLY": False,
-    'SESSION_LOGIN': False,
+    'SESSION_LOGIN': True,
     "OLD_PASSWORD_FIELD_ENABLED" : True,
     "LOGOUT_ON_PASSWORD_CHANGE" : False,
     
@@ -182,7 +182,7 @@ REST_AUTH  = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=24),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -198,7 +198,7 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'my-app-auth'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.IsAuthenticated'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',

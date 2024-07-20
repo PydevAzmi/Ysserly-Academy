@@ -30,6 +30,7 @@ class StudentSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     professor = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
+    is_requested = serializers.SerializerMethodField()
     enrolled_students = serializers.SerializerMethodField()
     class Meta:
         model = Course
@@ -40,13 +41,21 @@ class CourseSerializer(serializers.ModelSerializer):
     
     def get_is_enrolled(self, obj):
         user = self.context['request'].user
-        if user.role == "Student":
-            enrolled = Enrollment.objects.filter(course = obj, student = user.student_profile).exists()
-            return True if enrolled else False
+        if not user.is_anonymous:
+            if user.role == "Student":
+                enrolled = Enrollment.objects.filter(course = obj, student = user.student_profile).exists()
+                return True if enrolled else False
         return False
     
     def get_enrolled_students(self, obj):
         return Enrollment.objects.filter(course = obj).count()
+    
+    def get_is_requested(self, obj):
+        user = self.context["request"].user
+        if user.role == "Student":
+            requested = Request.objects.filter(course = obj, student = user.student_profile, status="Pending").exists()
+            return True if requested else False
+        return False
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -84,3 +93,18 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             "id",
             "student",
         ]
+
+
+class RequestSerializer(serializers.ModelSerializer):
+    student = serializers.SerializerMethodField()
+    course = serializers.SerializerMethodField()
+    status = serializers.ReadOnlyField()
+    class Meta:
+        model = Request
+        fields = '__all__'
+
+    def get_course(self, obj):
+        return f"{obj.course.title}"
+        
+    def get_student(self, obj):
+        return f"{obj.student.user.username}"
