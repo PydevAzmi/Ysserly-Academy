@@ -12,19 +12,21 @@ class IsProfessorOrReadOnly(permissions.BasePermission):
             return True
         return obj.professor == request.user.professor_profile
 
-class IsStudentOrReadOnly(permissions.BasePermission):
+class IsStudentOrProfessorResponse(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
+        if request.user.role == "Student":
+            requested = Request.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
+            if request.method in permissions.SAFE_METHODS and requested:
+                return True
         return request.user.role == 'Student'
-    
+    """
     def has_object_permission(self, request, view, obj):
         if request.user.role == 'Professor':
             if request.method in ('GET', 'HEAD', 'OPTIONS', 'patch'):
                 return obj.course.professor == request.user.professor_profile
             return False
         return obj.student == request.user.student_profile
-
+    """
 class IsStudentAndApproved(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.role != 'student':
@@ -39,18 +41,14 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
 class Is_CourseOwnerOrStudentApproved(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.user.role != 'Student': 
+        if request.user.role == 'Student': 
+            if request.method in permissions.SAFE_METHODS:
+                enrolled = Enrollment.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
+                return True if enrolled else False
             return False
-        
-        enrolled = Enrollment.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
-        return True if enrolled else False
-    
-    def has_object_permission(self, request, view, obj):
-        user = request.user
-        if request.method in permissions.SAFE_METHODS:
-            if user.role=="Student" and user.student_profile in  obj.course.enrollments.student.all():
+        else:
+            course=Course.objects.get(id = view.kwargs['course_pk'])
+            if request.user == course.professor.user:
                 return True
-            return False
-        return obj.course.professor == user.professor_profile
-    
+        return False
     

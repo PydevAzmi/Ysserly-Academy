@@ -52,9 +52,11 @@ class LecturesListCreateAPIView(generics.ListCreateAPIView):
 class LectureRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LectureSerialiazer
     queryset = Lecture.objects.all()
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
 
 class FilesListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = FileSerializer
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
     def get_queryset(self):
         pk = self.kwargs["lec_pk"]
         lec = Lecture.objects.get(id=pk)
@@ -69,10 +71,12 @@ class FilesListCreateAPIView(generics.ListCreateAPIView):
 class FileRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
     queryset = FileContent.objects.all()
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
 
 
 class VideosListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = VideosSerializer
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
     def get_queryset(self):
         pk = self.kwargs["lec_pk"]
         lec = Lecture.objects.get(id=pk)
@@ -86,11 +90,13 @@ class VideosListCreateAPIView(generics.ListCreateAPIView):
 
 class videoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = VideosSerializer
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
     queryset = VideoContent.objects.all()
 
 
 class EnrollmentListAPIView(generics.ListAPIView):
     serializer_class = EnrollmentSerializer
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
     def get_queryset(self):
         pk = self.kwargs["course_pk"]
         course = Course.objects.get(id=pk)
@@ -100,14 +106,15 @@ class EnrollmentListAPIView(generics.ListAPIView):
 class EnrollmentRetrieveUpdateDestroyAPIView(generics.RetrieveDestroyAPIView):
     serializer_class = EnrollmentSerializer
     queryset = Enrollment.objects.all()
+    permission_classes = [permissions.IsAuthenticated, Is_CourseOwnerOrStudentApproved]
 
 class RequestListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
-    permission_classes = [IsStudentOrReadOnly]
+    permission_classes = [IsStudentOrProfessorResponse]
     def get_queryset(self):
         pk = self.kwargs["course_pk"]
         course = Course.objects.get(id=pk)
-        queryset = Request.objects.filter(course = course, status="Pending")
+        queryset = Request.objects.filter(course = course, status="Pending").all()
         return queryset
     
     def perform_create(self, serializer):
