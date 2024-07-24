@@ -98,7 +98,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     student = serializers.SerializerMethodField()
     course = serializers.SerializerMethodField()
-    status = serializers.ReadOnlyField()
+    #status = serializers.ReadOnlyField()
     class Meta:
         model = Request
         fields = '__all__'

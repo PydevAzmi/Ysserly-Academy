@@ -105,14 +105,14 @@ class Request(models.Model):
     def __str__(self) -> str:
         return f'{self.student} - {self.course}'
     
-    def save(self):
+    def save(self, *args, **kwargs):
         exist = Enrollment.objects.filter(Q(student=self.student) & Q(course=self.course)).exists()
         if self.status == "Approved" and not exist :
             Enrollment.objects.create(
                 student = self.student,
                 course = self.course
             )
-        return super().save()
+        super().save(*args, **kwargs)
 
 class Notification(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

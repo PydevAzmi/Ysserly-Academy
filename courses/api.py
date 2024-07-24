@@ -2,6 +2,7 @@ from rest_framework import generics, filters
 from .serializers import *
 from .models import *
 from .permissions import *
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
 class ProfessorListApiView(generics.ListAPIView):
@@ -110,21 +111,21 @@ class EnrollmentRetrieveUpdateDestroyAPIView(generics.RetrieveDestroyAPIView):
 
 class RequestListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = RequestSerializer
-    permission_classes = [IsStudentOrProfessorResponse]
+    permission_classes = [permissions.IsAuthenticated, IsStudentOrProfessorResponse]
     def get_queryset(self):
         pk = self.kwargs["course_pk"]
-        course = Course.objects.get(id=pk)
+        course = get_object_or_404(Course, pk=pk)
         queryset = Request.objects.filter(course = course, status="Pending").all()
         return queryset
     
     def perform_create(self, serializer):
         pk = self.kwargs["course_pk"]
-        course = Course.objects.get(id=pk)
+        course = get_object_or_404(Course, pk=pk)
         user = self.request.user
         serializer.save(course=course, student=user.student_profile)
-        return super().perform_create(serializer)
 
 
-class RequestRetrieveUpdateDestroyAPIView(generics.RetrieveDestroyAPIView):
+class RequestRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RequestSerializer
     queryset = Request.objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsStudentOrProfessorResponse]
