@@ -16,8 +16,9 @@ class IsProfessorOrReadOnly(permissions.BasePermission):
 class IsStudentOrProfessorResponse(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.role == "Student":
+            enrolled = Enrollment.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
             requested = Request.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
-            if not requested or request.method in ('GET', 'HEAD', 'OPTIONS', 'DELETE'):
+            if not requested and not enrolled or request.method in ('GET', 'HEAD', 'OPTIONS', 'DELETE'):
                 return True
             return False
         else:
@@ -26,6 +27,16 @@ class IsStudentOrProfessorResponse(permissions.BasePermission):
                 if request.method in ('GET', 'HEAD', 'OPTIONS', 'PUT','DELETE'):
                     return True
             return False
+        
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.role == "Student":
+            if user == obj.student.user:
+                return True
+        else:
+            if user == obj.course.professor.user:
+                return True
+        return False
 
 class Is_CourseOwnerOrStudentApproved(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -36,7 +47,7 @@ class Is_CourseOwnerOrStudentApproved(permissions.BasePermission):
             return False
         else:
             course=Course.objects.get(id = view.kwargs['course_pk'])
-            if request.user == course.professor.user:
+            if request.user.professor_profile == course.professor:
                 return True
         return False
     

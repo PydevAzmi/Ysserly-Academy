@@ -115,7 +115,11 @@ class RequestListCreateAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         pk = self.kwargs["course_pk"]
         course = get_object_or_404(Course, pk=pk)
-        queryset = Request.objects.filter(course = course, status="Pending").all()
+        if self.request.user.role == "Student":
+            queryset = Request.objects.filter(course = course, student=self.request.user.student_profile, status="Pending").all()
+        else:
+            queryset = Request.objects.filter(course = course, status="Pending").all()
+
         return queryset
     
     def perform_create(self, serializer):
