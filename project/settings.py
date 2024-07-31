@@ -209,13 +209,6 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-<<<<<<< HEAD
-=======
-CORS_ALLOWED_ORGINS = [
-    "http://127.0.0.1:8000/",
-    env('ALLOWED_ORGINS'),
-]
->>>>>>> refs/remotes/origin/deploy
 
 CORS_ALLOW_ALL_ORIGINS = True
 
