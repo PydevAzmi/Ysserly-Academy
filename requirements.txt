@@ -10,3 +10,4 @@ Pillow
 django-cors-headers
 django-rest-swagger
 django-environ
+psycopg2
