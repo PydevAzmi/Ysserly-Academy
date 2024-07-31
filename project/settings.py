@@ -45,13 +45,14 @@ INSTALLED_APPS = [
     
     # My Apps
     'courses',
+
     # Third Party Libraries
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
-    #'rest_framework_swagger',
+    'rest_framework_swagger',
     "corsheaders",
     'django_filters',
     'allauth',
@@ -194,8 +195,8 @@ REST_AUTH  = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(hours=24),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(weeks=8),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }

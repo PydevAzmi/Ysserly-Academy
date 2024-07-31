@@ -9,3 +9,4 @@ django-allauth[socialaccount]
 Pillow
 django-cors-headers
 django-rest-swagger
+django-environ
