@@ -12,3 +12,4 @@ django-rest-swagger
 django-environ
 psycopg2
 whitenoise
+gunicorn
