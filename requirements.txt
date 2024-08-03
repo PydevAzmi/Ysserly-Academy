@@ -12,4 +12,4 @@ django-rest-swagger
 django-environ
 psycopg2
 whitenoise
-gunicorn
+gunicorn==19.7.1
