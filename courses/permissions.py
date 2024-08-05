@@ -17,7 +17,7 @@ class IsStudentOrProfessorResponse(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.role == "Student":
             enrolled = Enrollment.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
-            requested = Request.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk']).exists()
+            requested = Request.objects.filter(student=request.user.student_profile, course=view.kwargs['course_pk'], status="Pending").exists()
             if not requested and not enrolled or request.method in ('GET', 'HEAD', 'OPTIONS', 'DELETE'):
                 return True
             return False
