@@ -26,7 +26,7 @@ class FacebookLogin(SocialLoginView):
 
 
 def email_confirmation(request, key):
-    return redirect(f"{env("DOMIN")}/auth/registration/account-confirm-email/{key}")
+    return redirect(f"{env('DOMIN')}/auth/registration/account-confirm-email/{key}")
 
 def reset_password_confirm(request, uid, token):
-    return redirect(f"{env("DOMIN")}/auth/password/reset/confirm/?{uid}&{token}")
+    return redirect(f"{env('DOMIN')}/auth/password/reset/confirm/?{uid}&{token}")
